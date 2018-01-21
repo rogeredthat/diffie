@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 let fq = require('fuzzquire');
-let http = fq('http');
-let app = require('../main');
+let http = require('http');
+let app = fq('main');
 let config = fq('config');
 
 app.set('port', config.port || 3000);
@@ -34,5 +34,5 @@ server.on('error', function (error) {
 server.on('listening', function () {
     var addr = server.address();
     var bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
-    debug('"launcher: Listening on ' + bind);
+    console.log('"launcher: Listening on ' + bind);
 });

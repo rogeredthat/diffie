@@ -1,15 +1,15 @@
 let fq = require('fuzzquire');
-let express = fq('express');
+let express = require('express');
 let router = express.Router();
+let compute = fq('compute');
 
-router.get('/', function (req, res) {
-    // Response will hold our unique id and public key.
-    res.end('Served public key');
-});
-
-router.post('/', function(req, res) {
-    // Request body will hold identity, and public key of sender.
-    res.end('Saved public keys');
+router.get('/exchange', function (req, res) {
+    let data = compute(req.query.modulo, req.query.base, req.query.value);
+    process.env.DHKE_SECRET=data.secret;
+    console.log("Secret Computed:", data.secret);
+    res.json({
+		value: data.bob,
+    });
 });
 
 module.exports = router;
