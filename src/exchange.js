@@ -2,11 +2,17 @@ let fq = require('fuzzquire');
 let express = require('express');
 let router = express.Router();
 let compute = fq('compute');
+let lowdb = require('lowdb');
+let FileSync = require('lowdb/adapters/FileSync');
 
-router.get('/exchange', function (req, res) {
+let adapter = new FileSync('keys.json');
+let db = lowdb(adapter);
+
+router.get('/exchange', (req, res) => {
     let data = compute.server(req.query.modulo, req.query.base, req.query.value);
-    process.env.DHKE_SECRET=data.secret;
-    console.log("Secret Computed:", data.secret);
+    db.defaults({keys:[]}).write();
+    db.get('keys').push({user:req.query.user, key:data.secret}).write();
+    console.log(req.query.user + "'s secret is:", data.secret);
     res.json({
 		value: data.bob,
     });
